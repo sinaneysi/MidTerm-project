@@ -1,0 +1,37 @@
+services:
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail
+    domainname: archidev.ir
+    env_file: mailserver.env
+    ports:
+      - "25:25"    # SMTP  (explicit TLS => STARTTLS)
+      - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
+      - "465:465"  # ESMTP (implicit TLS)
+      - "587:587"  # ESMTP (explicit TLS => STARTTLS)
+      - "993:993"  # IMAP4 (implicit TLS)
+    volumes:
+      - ./data/dms/mail-data/:/var/mail/
+      - ./data/dms/mail-state/:/var/mail-state/
+      - ./data/dms/mail-logs/:/var/log/mail/
+      - ./data/dms/config/:/tmp/docker-mailserver/
+      - ./data/letsencrypt:/etc/letsencrypt
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    stop_grace_period: 1m
+    cap_add:
+      - NET_ADMIN
+    healthcheck:
+      test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+      timeout: 3s
+      retries: 0
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    ports:
+      - "80:80"
+    volumes: 
+      - ./data/letsencrypt:/etc/letsencrypt
+      - ./data/certbot/logs:/var/log/letsencrypt/
+    command: certonly --standalone --force-renewal --email s1n4.ne1331@gmail.com -d mail."archidev.ir" --agree-tos
