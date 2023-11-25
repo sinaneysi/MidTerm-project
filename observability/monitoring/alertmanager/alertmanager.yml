@@ -1,0 +1,21 @@
+global:
+  smtp_smarthost: 'mail.archidev.ir:587'
+  smtp_from: 'sina@archidev.ir'
+  smtp_auth_username: 'sina@archidev.ir'
+  smtp_auth_password: 'sina.neissi'
+  smtp_auth_identity: 'sina@archidev.ir'
+
+route:
+  group_by: ['instance', 'severity']
+  group_wait: 30s
+  group_interval: 30s
+  repeat_interval: 30m
+  receiver: 'stage'
+
+receivers:
+- name: 'stage'
+  telegram_configs:
+  - bot_token: 6297298044:AAEiY04136swFuR3YLMdoaRggJNv2jXHvFk
+    api_url: https://api.telegram.org
+    chat_id: -1001938607879
+    parse_mode: ''
