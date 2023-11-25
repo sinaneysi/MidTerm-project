@@ -1,0 +1,56 @@
+version: '3.8'
+volumes:
+  sonarqube_db:
+    name: sonarqube_db
+  sonarqube_conf:
+    name: sonarqube_data
+  sonarqube_data:
+    name: sonarqube_data
+  sonarqube_extensions:
+    name: sonarqube_extensions
+  sonarqube_logs:
+    name: sonarqube_logs
+services:
+  db:
+    image: "postgres:12.1"
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=mypass
+      - POSTGRES_DB=sonarqube
+    volumes:
+      - sonarqube_db:/var/lib/postgresql/data
+    networks:
+      web_net:
+
+  sonarqube:
+    image: "sonarqube:7.7-community"
+    container_name: sonarqube
+    environment:
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=mypass
+      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonarqube
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_data:/opt/sonarqube/data
+    depends_on:
+      - db
+    networks:
+      web_net:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=soanr"
+      - "traefik.http.routers.sonar.entrypoints=http"
+      - "traefik.http.routers.sonar.rule=Host(`sonar.archidev.ir`)"
+      - "traefik.http.routers.sonar.middlewares=https-redirect"
+      - "traefik.http.routers.sonar-secure.entrypoints=https"
+      - "traefik.http.routers.sonar-secure.rule=Host(`sonar.archidev.ir`)"
+      - "traefik.http.routers.sonar-secure.tls=true"
+      - "traefik.http.routers.sonar-secure.tls.options=default"
+      - "traefik.http.routers.sonar-secure.middlewares=security@file,hsts@file"
+      - "traefik.http.routers.sonar.service=sonar"
+      - "traefik.http.routers.sonar-secure.service=sonar"
+      - "traefik.http.routers.sonar-secure.tls.certresolver=mycert"
+      - "traefik.http.services.sonar.loadbalancer.server.port=9000"
