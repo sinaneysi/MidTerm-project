@@ -1,0 +1,97 @@
+version: '3.9'
+
+networks:
+  web_net:
+    external: true
+  app_net:
+    external: false
+
+volumes:
+  pg_0_data:
+  pg_1_data:
+  pg_2_data:
+    
+x-version-common:
+  &service-common
+  image: docker.io/bitnami/postgresql-repmgr:15
+  restart: always
+
+x-common-env:
+  &common-env
+  REPMGR_PASSWORD: repmgr
+  REPMGR_PARTNER_NODES: pg-0,pg-1,pg-2:5432
+  REPMGR_PORT_NUMBER: 5432
+  REPMGR_PRIMARY_HOST: pg-0
+  REPMGR_PRIMARY_PORT: 5432
+  POSTGRESQL_POSTGRES_PASSWORD: postgres
+  POSTGRESQL_USERNAME: postgres
+  POSTGRESQL_PASSWORD: postgres 
+  POSTGRESQL_DATABASE: postgres 
+  POSTGRESQL_SHARED_PRELOAD_LIBRARIES: pgaudit, pg_stat_statements
+  POSTGRESQL_SYNCHRONOUS_COMMIT_MODE: remote_write
+  POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS: 2
+
+services:
+  pg-0:
+    <<: *service-common
+    networks:
+    - app_net
+    volumes:
+      - pg_0_data:/bitnami/postgresql
+    environment:
+      <<: *common-env
+      REPMGR_NODE_NAME: pg-0
+      REPMGR_NODE_NETWORK_NAME: pg-0
+
+  pg-1:
+    <<: *service-common
+    networks:
+    - app_net
+    volumes:
+      - pg_1_data:/bitnami/postgresql
+    environment:
+      <<: *common-env
+      REPMGR_NODE_NAME: pg-1
+      REPMGR_NODE_NETWORK_NAME: pg-1
+
+  pg-2:
+    <<: *service-common
+    networks:
+    - app_net
+    volumes:
+      - pg_2_data:/bitnami/postgresql
+    environment:
+      <<: *common-env
+      REPMGR_NODE_NAME: pg-2
+      REPMGR_NODE_NETWORK_NAME: pg-2
+
+  haproxy:
+    #image: haproxy
+    build: .
+    container_name: haproxy
+    restart: always
+    networks:
+    - app_net
+    - web_net
+    mem_limit: 8192m
+    #ports:
+      # - '3000:3000'
+      # - '${POSTGRES_PRIV_IP}:5432:5432'
+    privileged: true
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=web_net
+      - traefik.http.routers.postgresql.entrypoints=http
+      - traefik.http.routers.postgresql.rule=Host(`${POSTSUB}.${domain}`)
+      - traefik.http.routers.postgresql.middlewares=https-redirect
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.postgresql-secure.entrypoints=https
+      - traefik.http.routers.postgresql-secure.rule=Host(`${POSTSUB}.${domain}`)
+      - traefik.http.routers.postgresql-secure.tls=true
+      - traefik.http.routers.postgresql-secure.tls.options=default
+      - traefik.http.routers.postgresql-secure.middlewares=web-auth
+      - traefik.http.routers.postgresql-secure.tls.certresolver=mycert
+      - traefik.http.services.postgresql.loadbalancer.server.port=3000
