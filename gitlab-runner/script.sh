@@ -1,7 +1,7 @@
 #!/bin/sh
 
 registration_token= <<PLACE HOLDER>>
-url= <<PLACE HOLDER>>
+url= git.archidev.ir
 
 docker exec -it gitlab-runner \
   gitlab-runner register \
