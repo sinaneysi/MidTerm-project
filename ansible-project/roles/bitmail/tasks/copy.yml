@@ -1,0 +1,35 @@
+---
+- name: create /opt/srevices dir
+  file:
+    path: "/opt/{{item}}"
+    state: directory
+  with_items: 
+    - services
+
+- name: create subdir files 
+  file:
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+  loop:
+    - bitwarden
+    - mailserver
+
+- name: copy bitwarden compose file to host
+  template:
+    src: bitwarden/compose.yml.j2
+    dest: "{{root_dir}}/bitwarden/docker-compose.yml"
+
+- name: copy bitwarden .env
+  template:
+    src: "bitwarden/.env"
+    dest: "{{root_dir}}/bitwarden/"
+
+- name: copy mail-server compose file to host
+  template:
+    src: mailserver/compose.yml.j2
+    dest: "{{root_dir}}/mailserver/docker-compose.yml"
+
+- name: copy mailserver .env
+  template:
+    src: "mailserver/mailserver.env"
+    dest: "{{root_dir}}/mailserver/"

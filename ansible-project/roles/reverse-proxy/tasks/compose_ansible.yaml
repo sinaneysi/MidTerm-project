@@ -1,0 +1,13 @@
+- name: create network 
+  community.docker.docker_network:
+    name: "{{item}}"
+  loop:
+    - app_net
+    - web_net
+
+- name: deploy traefik Compose stack
+  community.docker.docker_compose:
+    project_src: "{{root_dir}}/traefik"
+    files:
+      - docker-compose.yml
+  tags: deploy_compose

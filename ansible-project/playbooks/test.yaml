@@ -1,0 +1,11 @@
+---
+- name: deploy observability 
+  hosts: gitlab-runner
+  roles:
+    # - preparing-server
+    # - docker-installation
+    # - reverse-proxy
+    # - bitmail
+    # - observability
+    # - redis
+    - repo

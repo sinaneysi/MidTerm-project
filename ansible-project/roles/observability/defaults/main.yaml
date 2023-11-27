@@ -1,0 +1,24 @@
+domain: archidev.ir
+root_dir: /opt/services
+
+#monitoring
+prosub: metrics
+grasub: grafana
+alesub: alerts
+pgwsub: pushgw
+
+#logging 
+logsub: loki
+
+#traefik 
+websub: web
+WEB_AUTH_USER: sina
+WEB_AUTH_PASS: sina.neissi
+
+sublist:
+  - "{{prosub}}"
+  - "{{grasub}}"
+  - "{{alesub}}"
+  - "{{pgwsub}}"
+  - "{{logsub}}"
+  - "{{websub}}"

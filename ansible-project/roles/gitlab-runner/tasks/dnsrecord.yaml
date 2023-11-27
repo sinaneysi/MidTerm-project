@@ -1,0 +1,20 @@
+---
+- name: Create a pre-product.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "pre-product"
+    type: A
+    value: "{{PRE_IP}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+
+- name: Create a product.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "product"
+    type: A
+    value: "{{PRO_IP}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present

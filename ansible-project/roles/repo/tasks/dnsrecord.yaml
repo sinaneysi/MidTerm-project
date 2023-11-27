@@ -1,0 +1,34 @@
+---
+- name: Create a gitlab sub.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "{{item}}"
+    type: A
+    value: "{{ansible_host}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present 
+  loop: "{{git_sublist}}"
+
+- name: Create a traefik sub.hostname.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "{{TRASUB}}.{{inventory_hostname}}"
+    type: A
+    value: "{{ansible_host}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+
+- name: Create a minio sub.hostname.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "{{item}}.{{inventory_hostname}}"
+    type: A
+    value: "{{ansible_host}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+  loop: 
+    - "{{MINIO_SUB1}}"
+    - "{{MINIO_SUB2}}"

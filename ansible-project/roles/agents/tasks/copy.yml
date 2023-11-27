@@ -1,0 +1,29 @@
+- name: create /opt/srevices dir
+  file:
+    path: "/opt/{{item}}"
+    state: directory
+  with_items: 
+    - services
+
+- name: create files 
+  file:
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+  loop:
+    - agents
+    - agents/promtail
+  
+- name: promtail config
+  template:
+    src: agents/promtail/promtail.yml.j2
+    dest: "{{root_dir}}/agents/promtail/promtail.yml"
+
+- name: copy agents compose file to host
+  template:
+    src: agents/compose.yml.j2
+    dest: "{{root_dir}}/agents/docker-compose.yml"
+    
+- name: copy agents .env file 
+  template:
+    src: agents/.env
+    dest: "{{root_dir}}/agents/.env"

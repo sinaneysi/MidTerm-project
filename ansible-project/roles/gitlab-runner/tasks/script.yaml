@@ -1,0 +1,3 @@
+---
+- name: Execute the script
+  command: sh /opt/services/runner/script.sh

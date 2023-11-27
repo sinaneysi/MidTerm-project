@@ -1,0 +1,23 @@
+---
+- name: create /opt/services dir
+  file:
+    path: "/opt/{{item}}"
+    state: directory
+  with_items: 
+    - services
+- name: create files 
+  file:
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+  loop:
+    - runner
+
+- name: copy runner compose file to host
+  template:
+    src: runner/docker-compose.yaml.j2
+    dest: "{{root_dir}}/runner/docker-compose.yml"
+
+- name: copy runner register script
+  template:
+    src: runner/gitlab-runner-register.sh
+    dest: "{{root_dir}}/runner/script.sh"

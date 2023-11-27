@@ -1,0 +1,12 @@
+---
+- name: set agents dns to cloudflare
+  import_tasks: dnsrecord.yml
+  tags: set_dns
+
+- name: import docker compose copy task 
+  import_tasks: copy.yml
+  tags: copy_compose 
+  
+- name: import run docker compose task
+  import_tasks: compose_ansible.yml
+  tags: run_compose

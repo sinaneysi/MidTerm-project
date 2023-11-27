@@ -1,0 +1,6 @@
+# docker variables
+docker:
+  no_proxy: localhost,127.0.0.1,hub.hamdocker.ir
+  log_max_file: "5"
+  log_max_size: 100m
+  registry_mirror: https://hub.hamdocker.ir

@@ -1,0 +1,78 @@
+version: '3.8'
+
+networks:
+  web_net:
+    external: true
+    name: web_net
+
+services:
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    command: --disable_metrics=disk,udp,percpu,referenced_memory
+    restart: always
+    hostname: '${HOSTNAME}'
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      - "traefik.http.routers.cad.entrypoints=http"
+      - "traefik.http.routers.cad.rule=Host(`${CSUB}.{{inventory_hostname}}.${domain}`)"
+      - "traefik.http.routers.cad.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.cad-secure.entrypoints=https"
+      - "traefik.http.routers.cad-secure.rule=Host(`${CSUB}.{{inventory_hostname}}.${domain}`)"
+      - "traefik.http.routers.cad-secure.tls=true"
+      - "traefik.http.routers.cad-secure.tls.options=default"
+      - "traefik.http.routers.cad-secure.middlewares=web-auth"
+      - "traefik.http.routers.cad-secure.tls.certresolver=mycert"
+      - "traefik.http.services.cad.loadbalancer.server.port=8080"
+    networks:
+      web_net:
+
+  node-exporter:
+    image: prom/node-exporter:v1.3.1
+    restart: always
+    hostname: '${HOSTNAME}'
+    container_name: node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+      - --no-collector.powersupplyclass
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      - "traefik.http.routers.nod.entrypoints=http"
+      - "traefik.http.routers.nod.rule=Host(`${NSUB}.{{inventory_hostname}}.${domain}`)"
+      - "traefik.http.routers.nod.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.nod-secure.entrypoints=https"
+      - "traefik.http.routers.nod-secure.rule=Host(`${NSUB}.{{inventory_hostname}}.${domain}`)"
+      - "traefik.http.routers.nod-secure.tls=true"
+      - "traefik.http.routers.nod-secure.tls.options=default"
+      - "traefik.http.routers.nod-secure.middlewares=web-auth"
+      - "traefik.http.routers.nod-secure.tls.certresolver=mycert"
+      - "traefik.http.services.nod.loadbalancer.server.port=9100"
+    networks:
+      web_net:
+
+  promtail:
+    image: grafana/promtail:k116-a1dce32
+    restart: always
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - ./promtail:/etc/promtail/
+    command: -config.file=/etc/promtail/promtail.yml
+    networks:
+      web_net:

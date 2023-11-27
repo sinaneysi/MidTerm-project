@@ -1,0 +1,35 @@
+---
+- name: create /opt/srevices dir
+  file:
+    path: "/opt/{{item}}"
+    state: directory
+  with_items: 
+    - services
+- name: create files 
+  file:
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+  loop:
+    - traefik
+
+- name: copy traefik compose file to host
+  template:
+    src: traefik/compose.yml.j2
+    dest: "{{root_dir}}/traefik/docker-compose.yml"
+
+- name: create sub dir  
+  file:
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+  loop:
+    - traefik/traefik
+
+- name: copy traefik conf
+  template:
+    src: traefik/traefik/config.yml.j2
+    dest: "{{root_dir}}/traefik/traefik/config.yml"
+
+- name: copy traefik .env
+  template:
+    src: "traefik/.env"
+    dest: "{{root_dir}}/traefik/.env"

@@ -1,0 +1,11 @@
+---
+- name: config and setup all service
+  import_tasks: copy.yaml
+  tags: copy_compose
+
+- name: set dns record
+  import_tasks: dnsrecord.yaml
+
+- name: run docker compose file
+  import_tasks: compose_ansible.yaml
+  tags: run_compose

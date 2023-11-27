@@ -1,0 +1,14 @@
+---
+- name: Create a sub.hostname.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "{{item}}"
+    type: A
+    value: "{{ansible_host}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+  loop:
+    - "result.{{inventory_hostname}}"
+    - "vote.{{inventory_hostname}}"
+    - "{{inventory_hostname}}"

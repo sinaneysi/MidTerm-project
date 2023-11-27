@@ -1,0 +1,29 @@
+---
+- name: Creates directory
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+    - "{{root_dir}}"
+    - "{{root_dir}}/redis"
+
+- name: copy haproxy config
+  template:
+    src: redis/haproxy.cfg.j2
+    dest: "{{root_dir}}/redis/haproxy.cfg"
+    mode: u=rwX,g=rwX,o=rwX
+
+- name: Copy sentinel config 
+  template:
+    src: redis/sentinel.conf.j2
+    dest: "{{root_dir}}/redis/sentinel.conf"
+
+- name: copy Docker Compose files
+  template:
+    src: redis/docker-compose.yaml.j2
+    dest: "{{root_dir}}/redis/docker-compose.yaml"
+
+- name: copy redis .env
+  template:
+    src: redis/.env
+    dest: "{{root_dir}}/redis/"

@@ -1,0 +1,62 @@
+---
+- name: Create a bit.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "{{BITSUB}}"
+    type: A
+    value: "{{ansible_host}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+
+- name: Create a mail.archidev.ir A record to point to host
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "mail"
+    type: A
+    value: "{{ansible_host}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+
+- name: set SPF TXT record 
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "{{domain}}"
+    type: TXT
+    value: "{{SPF}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+
+- name: set DKIM TXT record
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "mail._domainkey"
+    type: TXT
+    value: "{{DKIM}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+
+- name: set DMARC TXT record
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "_dmarc"
+    type: TXT
+    value: "{{DMARC}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+
+- name: set MX archidev.ir that point to mail.archidev.ir
+  community.general.cloudflare_dns:
+    zone: "{{domain}}"
+    record: "{{domain}}"
+    type: MX
+    priority: 10
+    value: "mail.{{domain}}"
+    account_email: "{{ACCOUNT_EMAIL}}"
+    account_api_key: "{{ACCOUNT_API_KEY}}"
+    state: present
+    

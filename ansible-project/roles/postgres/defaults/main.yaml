@@ -1,0 +1,14 @@
+---
+# project directory
+root_dir: /opt/services
+
+#common-env 
+REPMGR_PASSWORD: repmgr
+POSTGRESQL_USERNAME: postgres
+POSTGRESQL_PASSWORD: postgres
+POSTGRESQL_DATABASE: postgres
+
+domain: archidev.ir
+POSTSUB: postgres
+
+POSTGRES_PRIV_IP: 192.168.1.92

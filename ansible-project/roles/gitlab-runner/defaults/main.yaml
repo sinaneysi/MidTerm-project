@@ -1,0 +1,5 @@
+root_dir: /opt/services
+domain: archidev.ir
+
+PRE_IP: "188.121.96.243"
+PRO_IP: "188.121.98.254"

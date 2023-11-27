@@ -1,0 +1,46 @@
+version: "3.7"
+services:
+
+## Bitwarden - Password Vault
+  bitwarden:
+    container_name: bitwarden
+    image: bitwardenrs/server
+    restart: always
+    networks:
+      - web_net
+#    ports:
+#      - "8888:80"
+    volumes:
+      - ${USERDIR}/docker/bitwarden:/data
+      - /var/log/docker:/var/log/docker
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - SIGNUPS_ALLOWED=true # Change to false after first login
+      - INVITATIONS_ALLOWED=false
+      - WEBSOCKET_ENABLED=true
+      - LOG_FILE=/var/log/docker/bitwarden.log
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_FROM=$SMTP_EMAIL
+      - SMTP_PORT=587
+      - SMTP_SSL=true
+      - SMTP_USERNAME=$SMTP_EMAIL
+      - SMTP_PASSWORD=$SMTP_PASS
+      - DOMAIN=https://${BITWARDEN}.${DOMAINNAME}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      - "traefik.http.routers.grafana.entrypoints=http"
+      - "traefik.http.routers.grafana.rule=Host(`${BITWARDEN}.${DOMAINNAME}`)"
+      - "traefik.http.routers.grafana.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.grafana-secure.entrypoints=https"
+      - "traefik.http.routers.grafana-secure.rule=Host(`${BITWARDEN}.${DOMAINNAME}`)"
+      - "traefik.http.routers.grafana-secure.tls=true"
+      - "traefik.http.routers.grafana-secure.tls.options=default"
+      - "traefik.http.routers.grafana-secure.tls.certresolver=mycert"
+      - "traefik.http.services.grafana.loadbalancer.server.port=80"
+
+networks:
+  web_net:
+    external: true
+    name: web_net

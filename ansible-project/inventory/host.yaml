@@ -1,0 +1,76 @@
+all:
+  children:
+    observability:
+      hosts:
+        #obs=observability
+        obs: 
+          ansible_host: 188.121.110.79
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+
+    repo_server:
+      hosts:
+        git:
+          ansible_host: 188.121.99.22
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+          
+        gitlab-runner:
+          ansible_host: 188.121.99.158
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+
+    stages:
+      hosts:
+        production:
+          ansible_host: 188.121.110.161
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+
+        pre-product:
+          ansible_host: 188.121.107.55
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+
+    mailbit:
+      hosts:
+        bitmail:
+          ansible_host: 37.32.5.28
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+
+    DB:
+      hosts:
+        postgres: 
+          ansible_host: 188.121.99.205
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+      
+        redis:
+          ansible_host: 188.121.105.190
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+
+    # object_storage:
+    #   hosts:
+    #     minio:
+    #       ansible_host: ""
+    #       ansible_user: ubuntu
+    #       ansible_port: 8090
+    #       ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa
+
+    ansible:
+      hosts:
+        awx:
+          ansible_host: 37.32.6.114
+          ansible_user: ubuntu
+          ansible_port: 8090
+          ansible_ssh_private_key_file: /home/sina/.ssh/id_rsa

@@ -1,0 +1,7 @@
+root_dir: /opt/services
+BITSUB: bit
+domain: archidev.ir
+
+DMARC: "v=DMARC1; p=none; sp=none; fo=0; adkim=r; aspf=r; pct=100; rf=afrf; ri=86400; rua=mailto:dmarc.report@{{domain}}; ruf=mailto:dmarc.report@{{domain}}"
+SPF: "v=spf1 mx ~all"
+DKIM: v=DKIM1; h=sha256; k=rsa;p=MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAsLqzBx0zUykXlsuCvTi5pK9ZUSOC/nExrU7KNCMdmkwBkTjLdiwa76guZX9I6zwEnL2YMchTRlfZZV1ztK8M8wGgG3lwH7x0r9hUaJ1ITj/C7w6PreX1pwgk5hLw/pKIQfuWRMX06xq8gpd8oEnnwyUd2UINPZCehSB5xyHKdK4wQYq1hrI0yEZfBz5HM+bw2r9ORQvcreuyZK4uZAmeLk7SnkNlozDmevMuywYv2w5qcSfDTU6MrgL5/QgdPTgFVnoUDG6GefzzU3ZV5YNQTO93XqedNSdaY/BUsZKiRr18yCWmmTZ1CbVuwBtJtsM3vRMnqxa7+u3PiCjiLgFIlfu1//al0peD9tOCOqw5dvzkGrDAElVJYWosjtlphkd6TQv79NP6ya4uMs5yGx8Uum9NYrcJcwPQRE+nz09VMvBLUfk9bd6ECCBbFKUm+efhPFgZDDH55e+e1ogPUvufGOyxqs1abroWLl9oDYE9OTF3pa8RFRQhkN5NsbZzc+RJrEEul3zGUqBDaRdhfxOpAAadXGhHD+xRWYPNaEPl+ZHeK9DlHwKF3UcKHL1A/57FXcdv7LhU0ubdm3Hlh4S8DXCxww1+mmlxBiilLC8eJRfI3ukTP6YCGqH2cAIxfC3xSHw0CNOkiAlVHZ2hv8vuMl775S+1HotV+Ua2bGRLgrMCAwEAAQ==

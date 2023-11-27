@@ -1,0 +1,86 @@
+---
+- name: create dir
+  file:
+    path: "{{item}}"
+    state: directory
+    mode: "644"
+  loop:
+    - /opt/services
+    - "{{root_dir}}"
+- name: create sub dir
+  file: 
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+    mode: "644"
+  loop:
+    - gitlab
+    - minio
+    - nexus
+    - sonar
+    - traefik
+
+- name: create traefik/traefik sub dir 
+  file: 
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+    mode: "644"
+  loop:
+    - traefik/traefik
+
+# copy compose files into host
+- name: gitlab compose file 
+  template:
+    src: gitlab/{{item}}
+    dest: "{{root_dir}}/gitlab/"
+    mode: "644"
+  tags: cp_compose
+  loop:
+    - compose.yml
+    - .env
+
+
+- name: minio compose file
+  template:
+    src: minio/{{item}}
+    dest: "{{root_dir}}/minio/"
+    mode: "644"
+  tags: cp_compose 
+  loop:
+    - compose.yml
+    - .env
+    - nginx.conf
+
+- name: nexus compose file
+  template:
+    src: nexus/{{item}}
+    dest: "{{root_dir}}/nexus/"
+    mode: "644"
+  tags: cp_compose 
+  loop:
+    - compose.yml
+    - .env
+
+- name: sonar compose file
+  template:
+    src: sonar/{{item}}
+    dest: "{{root_dir}}/sonar/"
+    mode: "644"
+  tags: cp_compose 
+  loop:
+    - compose.yml
+
+- name: traefik compose file
+  template:
+    src: traefik/{{item}}
+    dest: "{{root_dir}}/traefik/"
+    mode: "644"
+  tags: cp_compose 
+  loop:
+    - compose.yml
+    - .env
+
+- name: copy traefik config file
+  template:
+    src: traefik/traefik/config.yml.j2
+    dest: "{{root_dir}}/traefik/traefik/config.yml"
+

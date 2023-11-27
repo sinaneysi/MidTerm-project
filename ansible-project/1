@@ -1,0 +1,9 @@
+all:
+  children:
+    web_servers:
+      hosts:
+        ubs:
+          ansible_host: 192.168.1.102
+          ansible_user: sina
+          ansible_port: 3022
+

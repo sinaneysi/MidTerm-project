@@ -1,0 +1,4 @@
+---
+- name: set dns record to cloudflare
+  import_tasks: dnsrecord.yml
+  tags: set_dns

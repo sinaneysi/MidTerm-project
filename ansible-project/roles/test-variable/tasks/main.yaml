@@ -1,0 +1,22 @@
+---
+- name: Show all the hosts in the inventory
+  ansible.builtin.debug:
+    msg: "{{inventory_hostname}}"
+  # loop: "{{inventory_hostname}}"
+
+# - name: copy template file to the host
+#   template:
+#     src: monitoring/prometheus/prometheus.yml.j2
+#     dest: /home/sina/trash/prom/prometheus.yml
+
+# - name: Create a test.example.net A record to point to 127.0.0.1
+#   community.general.cloudflare_dns:
+#     zone: "{{domain}}"
+#     record: "cad.{{item-0}}"
+#     type: A
+#     value: "{{item-1}}"
+#     account_email: s1n4.ne1331@gmail.com
+#     account_api_key: "a4a61eb4d9356527fc29928403ff61778336e"
+#     state: present 
+#   loop: "{{groups['all']}}"
+

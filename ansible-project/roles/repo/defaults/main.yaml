@@ -1,0 +1,22 @@
+root_dir: "/opt/services/repo"
+TRAEFIK_WEB_USER: sina
+TRAEFIK_WEB_PASSWORD: '{SHA}wArISOuNowONmYSwPvTADr12LU8='
+domain: archidev.ir
+TRASUB: web
+cert_email: s1n4.ne1331@gmail.com 
+
+#minio
+MINIO_SUB1: object
+MINIO_SUB2: io
+
+items:
+  - gitlab
+  - minio
+  - nexus
+  - sonar
+  - traefik
+
+git_sublist:
+  - git
+  - reg
+  - pages

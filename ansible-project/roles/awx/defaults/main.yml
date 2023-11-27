@@ -1,0 +1,9 @@
+---
+root_dir: /opt/services
+AWXSUB: awx
+domain: archidev.ir
+
+AWX_TAG: 17.1.0
+
+AWX_ADMIN_PASS: sina.neissi
+AWX_ADMIN_USER: admin

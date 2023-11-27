@@ -1,0 +1,30 @@
+---
+# project directory
+REPO_DIRE_NAME: /var/services
+
+# nexus3, gitlab, and traefik docker image address and version
+NEXUS_IMAGE: sonatype/nexus3
+NEXUS_VERSION: 3.38.0
+TRAEFIK_IMAGE: traefik
+TRAEFIK_VERSION: v2.6.1
+GIT_IMAGE: gitlab/gitlab-ce
+GIT_VERSION: latest
+# Domain and subdomain definition
+DOMAIN_NAME: ansible.archidev.ir
+TRAEFIK_SUB_DOMAIN: web
+NEXUS_SUB_DOMAIN: repo
+HUB_SUB_DOMAIN: hub
+
+# pass generate with this commands
+# htpasswd -nbs user pass
+WEB_AUTH_USER: sina
+TRAEFIK_ACME_EMAIL: s1n4.ne1331@gmail.com
+
+# Nexus configurationUTH_PASS
+NEXUS_ADMIN_USERNAME: sina
+NEXUS_ADMIN_PASSWORD: sina.neissi
+NEXUS_SERVICE_URL: "https://{{ NEXUS_SUB_DOMAIN }}.{{ DOMAIN_NAME }}"
+NEXUS_REPO_USERNAME: repo
+NEXUS_REPO_EMAIL: s1n4.ne1331@gmail.com
+DOCKER_REPO_BLOBSTORE: docker
+NEXUS_REPO_PASSWORD: admin

@@ -1,0 +1,166 @@
+---
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0600'
+  loop:
+    - /etc/cron.d
+    - /etc/cron.daily
+    - /etc/cron.hourly
+    - /etc/cron.weekly
+    - /etc/cron.monthly
+    - /boot/grub/grub.cfg
+    - /etc/crontab
+
+- name: restrict access to gcc
+  file:
+    path: "{{ item }}"
+    mode: '0750'
+  loop:
+    - /usr/bin/as
+    - /etc/ssh/sshd_config
+
+
+- name: Create sysctl configuration file
+  copy:
+    content: |
+      kernel.kptr_restrict = 2
+      kernel.sysrq = 0
+      net.ipv4.conf.all.accept_redirects = 0
+      net.ipv4.conf.all.log_martians = 1
+      net.ipv4.conf.all.send_redirects = 0
+      net.ipv4.conf.default.accept_redirects = 0
+      net.ipv4.conf.default.log_martians = 1
+      net.ipv6.conf.all.accept_redirects = 0
+      net.ipv6.conf.default.accept_redirects = 0
+    dest: /etc/sysctl.d/80-lynis.conf
+    owner: root
+    group: root
+    mode: '0644'
+  tags: sysctl
+
+
+- name: disable drivers like usb
+  lineinfile:
+    path: /etc/modprobe.d/usb.conf
+    line: blacklist usb-storage
+    create: true
+  tags: driver
+
+- name: disable drivers like firewire
+  lineinfile:
+    path: /etc/modprobe.d/firewire.conf
+    line: blacklist firewire-core
+    create: true
+  tags: driver
+
+
+- name: change default umask for bashrc 
+  template:
+    src: bash.bashrc.j2
+    dest: /etc/bash.bashrc
+  tags: umask
+
+- name: change default umask for login.defs
+  template:
+    src: login.defs.j2
+    dest: /etc/login.defs
+  tags: umask
+
+- name: config sysctl file
+  template:
+    src: sysctl.conf.j2
+    dest: /etc/sysctl.conf
+  tags: sysctl
+
+
+
+- name:  sysctl reload
+  shell: sysctl --system
+  tags: sysctl 
+
+- name: change default umask for profile
+  template:
+    src: profile.j2
+    dest: /etc/profile
+  tags: umask
+
+- name: change directory premissions 
+  file:
+    path: /etc/sudoers.d
+    state: directory
+    recurse: yes
+    mode: '0600'
+
+
+- name: change password max and min age
+  template:
+    src: login.defs.j2
+    dest: /etc/login.defs
+
+
+- name: Stop and Disable ufw service if started
+  ansible.builtin.service:
+    name: ufw
+    state: stopped
+    enabled: no
+
+- name: Stop and Disable postfix service if started
+  ansible.builtin.service:
+    name: postfix
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Make timout configuration file.
+  template:
+    src: timout.j2
+    dest: /etc/profile.d/timout-settings.sh
+
+- name: Set timezone to Asia/Tehran
+  community.general.timezone:
+    name: Asia/Tehran
+  notify: Restart ntp
+
+
+- name: Set authorized key taken from file
+  ansible.posix.authorized_key:
+    user: "{{ansible_user}}"
+    state: present
+    key: "{{ lookup('file', '/home/sina/.ssh/id_rsa.pub') }}"
+
+
+- name: Copy ssh banner file.
+  copy:
+    src: ssh_banner
+    dest: /etc/issue
+
+
+- name: Make sshd configuration file.
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+  notify: Restart ssh
+  tags: sshd
+
+- name: Make iptables configuration file.
+  template:
+    src: iptables.j2
+    dest: /etc/iptables/rules.v4
+
+- name: restore iptables state from a file
+  community.general.iptables_state:
+    state: restored
+    path: /etc/iptables/rules.v4
+    noflush: true
+  notify: Restart iptables
+
+- name: Make fail2ban configuration file.
+  template:
+    src: fial2ban.j2
+    dest: /etc/fail2ban/jail.local
+  notify: Restart fail2ban
+

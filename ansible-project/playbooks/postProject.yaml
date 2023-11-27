@@ -1,0 +1,7 @@
+---
+- name: deploy gitlab-runner
+  hosts: gitlab-runner
+  roles:
+    - reverse-proxy
+    - gitlab-runner
+    - agents

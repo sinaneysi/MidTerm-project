@@ -1,0 +1,5 @@
+---
+- name: run docker-compose
+  ansible.builtin.command: ansible-playbook -i inventory install.yml
+  args:
+    chdir: /opt/services/awx-17.1.0/installer/.

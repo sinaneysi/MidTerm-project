@@ -1,0 +1,16 @@
+---
+- name: import copy.yaml task 
+  import_tasks: copy.yaml
+  tags: copy_compose
+
+- name: import copy.yaml task 
+  import_tasks: dnsrecord.yaml
+  tags: set_dns
+
+- name: import run compose.yaml task 
+  import_tasks: compose_ansible.yaml
+  tags: run_compose
+
+- name: run bash script on remote host
+  import_tasks: script.yaml
+  tags: script

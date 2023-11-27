@@ -1,0 +1,5 @@
+postgres_tag: "12.1"
+sonar_tag: "7.7-community"
+redis_tag: "6.2.4"
+sentry_tag: "latest"
+latest: "latest"

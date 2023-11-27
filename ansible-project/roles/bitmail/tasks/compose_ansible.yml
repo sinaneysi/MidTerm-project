@@ -1,0 +1,14 @@
+---
+- name: create network 
+  community.docker.docker_network:
+    name: "{{item}}"
+  loop:
+    - app_net
+    - web_net
+
+- name: deploy bitwarden Compose stack
+  community.docker.docker_compose:
+    project_src: "{{root_dir}}/bitwarden"
+    files:
+      - docker-compose.yml
+  tags: deploy_compose

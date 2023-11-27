@@ -1,0 +1,6 @@
+---
+- name: harening server 
+  hosts: product,gitlab-runner
+  roles: 
+    - preparing-server
+    - docker-installation

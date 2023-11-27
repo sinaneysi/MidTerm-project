@@ -1,0 +1,42 @@
+---
+- name: create network 
+  community.docker.docker_network:
+    name: "{{item}}"
+  loop:
+    - app_net
+    - web_net
+
+- name: deploty traefik Compose stack
+  community.docker.docker_compose:
+    project_src: "{{root_dir}}/traefik"
+    files:
+      - compose.yml
+  tags: compose
+
+- name: deploty gitlab Compose stack
+  community.docker.docker_compose:
+    project_src: "{{root_dir}}/gitlab"
+    files:
+      - compose.yml
+  tags: compose
+
+- name: deploty minio Compose stack
+  community.docker.docker_compose:
+    project_src: "{{root_dir}}/minio"
+    files:
+      - compose.yml
+  tags: compose
+
+# - name: deploty nexus Compose stack
+#   community.docker.docker_compose:
+#     project_src: "{{root_dir}}/nexus"
+#     files:
+#       - compose.yml
+#   tags: compose
+
+# - name: deploty sonar Compose stack
+#   community.docker.docker_compose:
+#     project_src: "{{root_dir}}/sonar"
+#     files:
+#       - compose.yml
+#   tags: compose

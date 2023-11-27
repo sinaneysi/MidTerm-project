@@ -1,0 +1,143 @@
+version: '3.4'
+networks:
+  web_net:
+    name: web_net
+    external: true
+  app_net:
+    name: app_net
+    external: false
+
+volumes:
+  postgres:
+    name: postgres
+  sentry:
+    name: sentry
+
+  sentry:
+    image: 'sentry:{{latest}}'
+    command: start
+    container_name: sentry
+    networks:
+      - web_net
+      - app_net
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - sentry:/var/lib/sentry/files
+    environment:
+      - SENTRY_SECRET_KEY=nBEAvcXcX5AkLwh35tN4f75G48cerThBEBj
+      - SENTRY_POSTGRES_HOST=postgres
+      - SENTRY_POSTGRES_PORT=5432
+      - SENTRY_DB_NAME=sentry
+      - SENTRY_DB_USER=sentry
+      - SENTRY_REDIS_HOST=redis
+      - SENTRY_REDIS_PORT=6379
+      - SENTRY_DB_PASSWORD=neMNpdezoj
+      # - SENTRY_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      # - SENTRY_EMAIL_HOST=smtp.com
+      # - SENTRY_EMAIL_PASSWORD=smtp-pass
+      # - SENTRY_EMAIL_USER=smtp-user
+      # - SENTRY_EMAIL_PORT=587
+      # - SENTRY_EMAIL_USE_TLS=True
+      # - SENTRY_ADMIN_EMAIL={{email}}
+      # - SENTRY_SERVER_EMAIL={{server_email}}
+      - SENTRY_URL_PREFIX=https://sentry.{{domain}}/
+      - SENTRY_ADMIN_USERNAME=admin
+      - SENTRY_ADMIN_PASSWORD=nBEAvcXcX5AkLwh35tN4f75G48cerThBEBj
+        #deploy:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      - "traefik.http.routers.sentry.entrypoints=http"
+      - "traefik.http.routers.sentry.rule=Host(`sentry.{{domain}}`)"
+      - "traefik.http.routers.sentry.middlewares=https-redirect"
+      - "traefik.http.routers.sentry-secure.entrypoints=https"
+      - "traefik.http.routers.sentry-secure.rule=Host(`sentry.{{domain}}`)"
+      - "traefik.http.routers.sentry-secure.tls=true"
+      - "traefik.http.routers.sentry-secure.tls.options=default"
+      - "traefik.http.routers.sentry-secure.middlewares=security@file,hsts@file"
+      - "traefik.http.routers.sentry.service=sentry"
+      - "traefik.http.routers.sentry-secure.service=sentry"
+      - "traefik.http.routers.sentry-secure.tls.certresolver=mycert"
+      - "traefik.http.services.sentry.loadbalancer.server.port=9000"
+
+  sentry-cron:
+    image: 'sentry:{{latest}}'
+    depends_on:
+      - postgres
+      - redis
+    command: "sentry run cron"
+    volumes:
+      - sentry:/var/lib/sentry/files
+    networks:
+      - app_net
+    environment:
+      - SENTRY_SECRET_KEY=nBEAvcXcX5AkLwh35tN4f75G48cerThBEBj
+      - SENTRY_POSTGRES_HOST=postgres
+      - SENTRY_POSTGRES_PORT=5432
+      - SENTRY_DB_NAME=sentry
+      - SENTRY_DB_USER=sentry
+      - SENTRY_REDIS_HOST=redis
+      - SENTRY_REDIS_PORT=6379
+      - SENTRY_DB_PASSWORD=neMNpdezoj
+      # - SENTRY_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      # - SENTRY_EMAIL_HOST=smtp.com
+      # - SENTRY_EMAIL_PASSWORD=smtp-pass
+      # - SENTRY_EMAIL_USER=user
+      # - SENTRY_EMAIL_PORT=587
+      # - SENTRY_EMAIL_USE_TLS=True
+      # - SENTRY_ADMIN_EMAIL={{email}}
+      # - SENTRY_SERVER_EMAIL={{server_email}}
+      - SENTRY_URL_PREFIX=http://sentry.{{domain}}/
+      - SENTRY_ADMIN_USERNAME=admin
+      - SENTRY_ADMIN_PASSWORD=nBEAvcXcX5AkLwh35tN4f75G48cerThBEBj
+
+  sentry-worker:
+    image: 'sentry:{{latest}}'
+    depends_on:
+      - sentry
+      - postgres
+      - redis
+    command: "sentry run worker"
+    volumes:
+      - sentry:/var/lib/sentry/files
+    networks:
+      - app_net
+    environment:
+      - SENTRY_SECRET_KEY=nBEAvcXcX5AkLwh35tN4f75G48cerThBEBj
+      - SENTRY_POSTGRES_HOST=postgres
+      - SENTRY_POSTGRES_PORT=5432
+      - SENTRY_DB_NAME=sentry
+      - SENTRY_DB_USER=sentry
+      - SENTRY_REDIS_HOST=redis
+      - SENTRY_REDIS_PORT=6379
+      - SENTRY_DB_PASSWORD=neMNpdezoj
+      # - SENTRY_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      # - SENTRY_EMAIL_HOST=smtp.com
+      # - SENTRY_EMAIL_PASSWORD=email-pass
+      # - SENTRY_EMAIL_USER=user
+      # - SENTRY_EMAIL_PORT=587
+      # - SENTRY_EMAIL_USE_TLS=True
+      # - SENTRY_ADMIN_EMAIL={{email}}
+      # - SENTRY_SERVER_EMAIL={{server_email}}
+      - SENTRY_URL_PREFIX=http://sentry.{{domain}}/
+      - SENTRY_ADMIN_USERNAME=admin
+      - SENTRY_ADMIN_PASSWORD=nBEAvcXcX5AkLwh35tN4f75G48cerThBEBj
+
+
+  redis:
+    image: 'redis:{{redis_tag}}'
+    networks:
+      - app_net
+
+  postgres:
+    image: 'postgres:{{postgres_tag}}'
+    networks:
+      - app_net
+    environment:
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: neMNpdezoj
+      POSTGRES_DB: sentry
+    volumes:
+      - postgres:/var/lib/postgresql/data

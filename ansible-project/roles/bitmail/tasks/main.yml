@@ -1,0 +1,12 @@
+---
+- name: import copy task
+  import_tasks: copy.yml
+  tags: copy
+
+- name: set dns to cloudflare
+  import_tasks: dnsrecord.yml
+  tags: set_dns
+
+- name: import compose task
+  import_tasks: compose_ansible.yml
+  tags: run_compose

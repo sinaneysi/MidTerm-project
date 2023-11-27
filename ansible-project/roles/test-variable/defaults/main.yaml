@@ -1,0 +1,17 @@
+sina: 
+  - mmd
+  - ali 
+  - reza
+domain: archidev.ir
+prosub: metrics
+grasub: grafana
+alesub: alerts
+pgwsub: pushgw
+
+sublist:
+  - "{{prosub}}"
+  - "{{grasub}}"
+  - "{{alesub}}"
+  - "{{pgwsub}}"
+
+host_ip: "{{ dict(ansible_inventory_hosts_all | zip(ansible_inventory_hosts_all))}}"

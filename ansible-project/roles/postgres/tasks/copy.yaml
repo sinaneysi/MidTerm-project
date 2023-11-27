@@ -1,0 +1,38 @@
+---
+- name: Creates directory
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+    - "{{root_dir}}"
+    - "{{root_dir}}/postgres"
+
+- name: copy haproxy config
+  template:
+    src: postgres/haproxy.cfg.j2
+    dest: "{{root_dir}}/postgres/haproxy.cfg"
+
+- name: copy dockerfile config
+  template:
+    src: postgres/Dockerfile.j2
+    dest: "{{root_dir}}/postgres/Dockerfile"
+
+- name: copy primary-check.sh config
+  template:
+    src: postgres/primary-check.sh.j2
+    dest: "{{root_dir}}/postgres/primary-check.sh"
+
+- name: copy standby-check.sh config
+  template:
+    src: postgres/standby-check.sh.j2
+    dest: "{{root_dir}}/postgres/standby-check.sh"
+
+- name: copy Docker Compose files
+  template:
+    src: postgres/docker-compose.yaml.j2
+    dest: "{{root_dir}}/postgres/docker-compose.yaml"
+
+- name: copy postgress .env
+  template:
+    src: postgres/.env
+    dest: "{{root_dir}}/postgres/"

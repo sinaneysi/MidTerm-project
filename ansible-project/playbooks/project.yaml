@@ -1,0 +1,55 @@
+---
+# - name: hardening server and install basic tools
+#   hosts: all
+#   roles:
+#     - preparing-server
+
+# - name: install docker 
+#   hosts: all
+#   roles:
+#     - docker-installation
+# - name: deploy awx stack
+#   hosts: awx
+#   roles:
+#     - reverse-proxy
+#     - awx
+#     - agents
+    
+- name: deploy observability stack 
+  hosts: obs
+  roles: 
+    - observability
+
+- name: deploy gitlab
+  hosts: git
+  roles:
+    - repo
+    - agents
+
+- name: deploy mail-server , bitwarden , agents 
+  hosts: bitmail
+  roles:
+    - reverse-proxy
+    - bitmail
+    - agents
+    
+- name: deploy agents on ci|cd stages
+  hosts: stages
+  roles:
+    - reverse-proxy
+    - stages
+    - agents
+
+- name: deploy postgres 
+  hosts: postgres
+  roles:
+    - reverse-proxy
+    - agents
+    - postgres
+
+- name: deploy redis
+  hosts: redis
+  roles:
+    - reverse-proxy
+    - agents
+    - redis

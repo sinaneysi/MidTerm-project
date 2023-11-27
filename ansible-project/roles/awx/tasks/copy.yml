@@ -1,0 +1,27 @@
+---
+- name: create /opt/services dir
+  file:
+    path: "/opt/{{item}}"
+    state: directory
+  with_items: 
+    - services
+
+- name: Unarchive a file that needs to be downloaded (added in 2.0)
+  ansible.builtin.unarchive:
+    src: https://github.com/ansible/awx/archive/17.1.0.zip
+    dest: "{{root_dir}}/"
+    remote_src: yes
+
+- name: copy inventory file to host
+  template:
+    src: "awxcompose/{{item}}"
+    dest: /opt/services/awx-17.1.0/installer
+  loop:
+    - inventory
+
+- name: copy docker compose file to host
+  template:
+    src: "awxcompose/{{item}}"
+    dest: "/opt/services/awx-17.1.0/installer/roles/local_docker/templates/{{item}}"
+  loop:
+    - docker-compose.yml.j2

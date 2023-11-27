@@ -1,0 +1,13 @@
+---
+- name: create docker bridge network
+  community.docker.docker_network:
+    name: "{{item}}"
+  loop:
+    - web_net
+
+- name: deploy agents Compose stack
+  community.docker.docker_compose:
+    project_src: "{{root_dir}}/agents"
+    files:
+      - docker-compose.yml
+  tags: deploy_compose

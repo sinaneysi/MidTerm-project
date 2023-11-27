@@ -1,0 +1,14 @@
+version: '3.8'
+networks:
+  web_net:
+    name: web_net
+services:
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: always
+    container_name: gitlab-runner
+    hostname: gitlab-runner
+    volumes:
+      - ./config/gitlab-runner:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/docker:/etc/docker:ro

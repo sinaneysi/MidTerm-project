@@ -1,0 +1,36 @@
+---
+# project directory
+root_dir: /opt/services
+
+#redis  
+REPLICATION: master
+REDIS_PASSWORD: str0ng_passw0rd
+
+
+#redis-slave-1
+REPLICATION_MODE: slave
+MASTER_HOST: redis
+MASTER_PASSWORD: str0ng_passw0rd
+# REDIS_PASSWORD: str0ng_passw0rd
+
+domain: archidev.ir
+REDISSUB: redis
+REDIS_PRIV_IP: 192.168.1.135
+
+#redis-slave-2
+# REPLICATION_MODE: slave
+# MASTER_HOST: redis
+# MASTER_PASSWORD: str0ng_passw0rd
+# REDIS_PASSWORD: str0ng_passw0rd
+
+
+#redis-sentinel-1
+# MASTER_PASSWORD: str0ng_passw0rd
+
+
+# #redis-sentinel-2
+# MASTER_PASSWORD: str0ng_passw0rd
+
+
+# #redis-sentinel-3
+# MASTER_PASSWORD: str0ng_passw0rd

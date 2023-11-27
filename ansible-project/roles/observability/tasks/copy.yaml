@@ -1,0 +1,108 @@
+---
+- name: create /opt/srevices dir
+  file:
+    path: "/opt/{{item}}"
+    state: directory
+  with_items: 
+    - services
+
+- name: create files 
+  file:
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+  loop:
+    - traefik
+    - monitoring
+    - logging
+
+- name: create files 
+  file:
+    path: "{{root_dir}}/monitoring/{{item}}"
+    state: directory
+    mode: u=rwX,g=rwX,o=rwX
+  loop:
+    - prometheus
+    - alertmanager
+    - blackbox
+
+- name: create prometheus/alertmanager
+  file:
+    path: "{{root_dir}}/monitoring/prometheus/alertmanager"
+    state: directory
+
+- name: copy monitoring compose file to host
+  template:
+    src: monitoring/compose.yml.j2
+    dest: "{{root_dir}}/monitoring/docker-compose.yml"
+
+- name: copy traefik compose file to host
+  template:
+    src: traefik/compose.yml.j2
+    dest: "{{root_dir}}/traefik/docker-compose.yml"
+
+- name: copy logging compose file to host
+  template:
+    src: logging/compose.yml.j2
+    dest: "{{root_dir}}/logging/docker-compose.yml"
+
+- name: copy prometheus.yml
+  template:
+    src: monitoring/prometheus/prometheus.yml.j2
+    dest: "{{root_dir}}/monitoring/prometheus/prometheus.yml"
+    mode: u=rwX,g=rwX,o=rwX
+
+- name: grafana-dashboard config
+  copy:
+    src: "monitoring/grafana"
+    dest: "{{root_dir}}/monitoring/"
+    remote_src: no
+
+- name: copy alertmanager config
+  template:
+    src: monitoring/alertmanager/alertmanager.yml.j2
+    dest: "{{root_dir}}/monitoring/alertmanager/alertmanager.yml"
+    mode: u=rwX,g=rwX,o=rwX
+
+    
+- name: create sub dir  
+  file:
+    path: "{{root_dir}}/{{item}}"
+    state: directory
+  loop:
+    - logging/promtail
+    - logging/loki
+    - traefik/traefik
+  tags: logging
+
+- name: loki local config
+  template:
+    src: logging/loki/loki.yml
+    dest: "{{root_dir}}/logging/loki"
+
+- name: copy traefik conf
+  template:
+    src: traefik/traefik/config.yml.j2
+    dest: "{{root_dir}}/traefik/traefik/config.yml"
+
+- name: promtail config
+  template:
+    src: logging/promtail/promtail.yml
+    dest: "{{root_dir}}/logging/promtail"
+- name: blackbox exporter config 
+  template:
+    src: monitoring/blackbox/blackbox-exporter.yml
+    dest: "{{root_dir}}/monitoring/blackbox/"
+- name: copy traefik .env
+  template:
+    src: "traefik/.env"
+    dest: "{{root_dir}}/traefik/.env"
+
+- name: copy logging .env
+  template:
+    src: "logging/.env"
+    dest: "{{root_dir}}/logging/"
+
+- name: copy monitoring .env
+  template:
+    src: "monitoring/.env"
+    dest: "{{root_dir}}/monitoring/"
