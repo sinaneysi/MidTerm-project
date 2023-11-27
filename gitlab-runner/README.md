@@ -63,6 +63,24 @@ docker compose logs -f
 Runner registration is the process that links the runner with one or more GitLab instances. You must register the runner so that it can pick up jobs from the GitLab instance.
 
 ```bash
+cat script.sh
+registration_token= <<PLACE HOLDER>>
+url= git.archidev.ir
+
+docker exec -it gitlab-runner \
+  gitlab-runner register \
+    --non-interactive \
+    --registration-token ${registration_token} \
+    --locked=false \
+    --description docker-stable \
+    --url ${url} \
+    --executor docker \
+    --docker-image docker:stable \
+    --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" \
+    --docker-network-mode web_net
+    
+# before runing script change url and registration_token 
+
 # runner registration with bash script
 ./script.sh
 ```
