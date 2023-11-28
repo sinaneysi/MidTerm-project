@@ -29,6 +29,7 @@ sudo sh get-docker.sh
 # Install Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+```
 Getting Started
 Configuration
 Before running the services, modify the .env file with your specific configurations, including ${HOSTNAME}, ${CSUB}, ${NSUB}, and ${domain}.
@@ -36,11 +37,11 @@ Before running the services, modify the .env file with your specific configurati
 Running the Services
 Run the monitoring stack using the following command:
 
-bash
+```bash
 Copy code
 docker-compose up -d
 This will start cAdvisor, Node Exporter, and Promtail.
-
+```
 Services
 cAdvisor
 cAdvisor provides container usage information.
