@@ -27,6 +27,7 @@ sudo sh get-docker.sh
 # Install Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+```
 Getting Started
 Configuration
 Before running the services, create an .env file with the following variables:
@@ -41,9 +42,10 @@ DOMAIN_ADDRESS=yourdomain.com
 Running the Services
 Run Traefik using the following command:
 
-bash
+```bash
 Copy code
 docker-compose up -d
+```
 This will start Traefik as a Docker service.
 
 Traefik Configuration
