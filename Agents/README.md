@@ -1,25 +1,71 @@
-Docker Compose File README
-This Docker Compose file sets up three services: cadvisor, node-exporter, and promtail, all of which are part of a network named web_net.
+# Docker Compose Configuration for Monitoring Stack
+
+This Docker Compose configuration sets up a monitoring stack using cAdvisor, Node Exporter, and Promtail. Traefik is used as a reverse proxy for secure access to the services.
+
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+  - [Configuration](#configuration)
+  - [Running the Services](#running-the-services)
+- [Services](#services)
+  - [cAdvisor](#cadvisor)
+  - [Node Exporter](#node-exporter)
+  - [Promtail](#promtail)
+- [Traefik Configuration](#traefik-configuration)
+- [Networks](#networks)
+- [Volumes](#volumes)
+- [Additional Notes](#additional-notes)
+- [License](#license)
+
+## Prerequisites
+
+Ensure you have Docker and Docker Compose installed on your system.
+
+```bash
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+Getting Started
+Configuration
+Before running the services, modify the .env file with your specific configurations, including ${HOSTNAME}, ${CSUB}, ${NSUB}, and ${domain}.
+
+Running the Services
+Run the monitoring stack using the following command:
+
+bash
+Copy code
+docker-compose up -d
+This will start cAdvisor, Node Exporter, and Promtail.
 
 Services
-1. cadvisor
-The cadvisor service uses the gcr.io/cadvisor/cadvisor image and is configured to restart always. It has several volumes mounted for monitoring purposes and is labeled for use with Traefik as a reverse proxy. The labels include configuration for both HTTP and HTTPS entrypoints, redirection from HTTP to HTTPS, and the use of a middleware named web-auth. The service is also part of the web_net network.
+cAdvisor
+cAdvisor provides container usage information.
 
-2. node-exporter
-The node-exporter service uses the prom/node-exporter:v1.3.1 image and is also configured to restart always. It has several volumes mounted for monitoring purposes and is labeled for use with Traefik as a reverse proxy, similar to the cadvisor service. The service is also part of the web_net network.
+Access cAdvisor at http://your_domain_or_ip.
 
-3. promtail
-The promtail service uses the grafana/promtail:k116-a1dce32 image and is configured to restart always. It has a volume mounted for log files and another for its configuration file. The service is also part of the web_net network.
+Node Exporter
+Node Exporter exports system metrics from the host machine.
+
+Access Node Exporter at http://your_domain_or_ip:9100.
+
+Promtail
+Promtail is used for log collection.
+
+Traefik Configuration
+Traefik is configured to handle routing and SSL termination. Update Traefik labels in the docker-compose.yml file as needed.
 
 Networks
-The web_net network is defined as external and must be created before running docker-compose up.
+The services are connected to the web_net Docker network.
 
-Usage
-To use this Docker Compose file, you need to replace the placeholders (e.g., ${HOSTNAME}, ${CSUB}, ${NSUB}, {{inventory_hostname}}, ${domain}) with your actual values. Then, you can run the services using the command docker-compose up.
+Volumes
+Volumes are mounted for data persistence and configuration files.
 
-Please note that you need to have Docker and Docker Compose installed on your machine to use this file. Also, ensure that the web_net network is created before running the services. You can create the network using the command docker network create web_net.
+Additional Notes
+Ensure the necessary ports are open in your firewall.
+Customize Traefik labels for your specific domain.
+Adjust security measures as needed for your environment.
 
-Important
-This Docker Compose file is configured to use Traefik as a reverse proxy. Make sure you have Traefik set up correctly and the necessary middlewares (e.g., web-auth, https-redirect) are defined in your Traefik configuration. Also, ensure that you have a certificate resolver named mycert configured in Traefik for HTTPS support.
-
-This is a basic overview of the Docker Compose file. For more detailed information, please refer to the documentation of each individual service and Docker Compose.
