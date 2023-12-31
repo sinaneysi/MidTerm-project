@@ -1,6 +1,4 @@
 # MidTerm-project
-#Every Masterpiece Has Its Cheap Copy
-#https://github.com/AhmadRafiee?tab=repositories
 
 ![project_HLD](doc/HLD.jpg)
 
